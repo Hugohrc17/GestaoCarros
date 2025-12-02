@@ -8,13 +8,15 @@ namespace GestãoCarros
 
             // Add services to the container.
             builder.Services.AddRazorPages();
-            builder.Services.AddSwaggerGen();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+            builder.Services.AddMemoryCache();
+            builder.Services.AddResponseCaching();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -24,6 +26,8 @@ namespace GestãoCarros
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseResponseCaching();
 
             app.UseAuthorization();
 

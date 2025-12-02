@@ -1,0 +1,105 @@
+# .gitignore para projetos ASP.NET Core
+# Ignorar arquivos de build e dependências gerados
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.json
+*.props
+*.targets
+*.nuget*
+*.assets.json
+*.staticwebassets*
+*.deps.json
+*.runtimeconfig.json
+*.endpoint.json
+*.sourcelink.json
+*.RazorAssemblyInfo.cs
+*.GlobalUsings.g.cs
+*.MvcApplicationPartsAssemblyInfo.cs
+*.AssemblyInfo.cs
+*.FileListAbsolute.txt
+*.build.json
+*.development.json
+*.pack.json
+*.removed.txt
+*.ref/
+*.refint/
+*.scopedcss/
+*.projectbundle/
+*.staticwebassets/
+# Configurações locais
+.vs/
+# Logs, pacotes e arquivos temporários
+*.log
+*.vspscc
+*.vssscc
+*.dbmdl
+*.zip
+*.nupkg
+# Arquivos de publicação
+publish/
+# Configurações de ambiente
+appsettings.*.local.json
+# Diretórios de pacotes
+packages/
+# Arquivos do Rider
+.idea/
+*.sln.iml
+# Arquivos do Visual Studio Code
+.vscode/
+# Ignorar DLLs e executáveis
+*.dll
+*.exe
+*.exe.config
+*.dll.config
+*.mdb
+*.so
+*.dylib
+*.class
+*.psd1
+*.psm1
+*.pyc
+*.pyo
+*.pyd
+*.pidb
+*.apk
+*.jar
+*.war
+*.ear
+*.swp
+*.swo
+*.bak
+*.tmp
+*.temp
+*.old
+*.orig
+*.rej
+*.sln.ide
+*.sln.cache
+*.sln.bin
+*.sln.map
+*.sln.meta
+*.sln.tmp
+*.sln.old
+*.sln.orig
+*.sln.rej
+*.sln.swp
+*.sln.swo
+*.sln.bak
+*.sln.temp
+*.sln.userprefs
+*.sln.userosscache
+*.sln.vspscc
+*.sln.vssscc
+*.sln.dbmdl
+*.sln.pdb
+*.sln.cache
+*.sln.zip
+*.sln.nupkg
+*.sln.publish
+*.sln.idea
+*.sln.iml
+*.sln.vscode
