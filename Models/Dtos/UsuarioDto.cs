@@ -4,6 +4,7 @@ namespace GestãoCarros.Models.Dtos
 {
     public class UsuarioDto
     {
+        public Guid ConcessionariaId { get; set; }
         public string? Nome { get; set; }
 
         [EmailAddress]

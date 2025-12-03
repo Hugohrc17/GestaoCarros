@@ -1,6 +1,6 @@
-using GestãoCarros.Models;
 using GestãoCarros.Models.Dtos;
-using GestãoCarros.Services.Fabricante;
+using GestãoCarros.Services.Fabricantes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -8,6 +8,7 @@ namespace GestãoCarros.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class FabricanteController : ControllerBase
     {
         private readonly FabricanteService _fabricanteService;
@@ -18,6 +19,7 @@ namespace GestãoCarros.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,AdminInterno")]
         public async Task<IActionResult> ObterTodos()
         {
             var fabricantes = await _fabricanteService.ObterTodosAsync();
@@ -57,7 +59,7 @@ namespace GestãoCarros.Controllers
                 return NotFound();
             }
 
-            await _fabricanteService.AtualizarAsync(id, fabricanteDto);
+            // await _fabricanteService.AtualizarAsync(id);
             return NoContent();
         }
 

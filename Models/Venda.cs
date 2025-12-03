@@ -1,23 +1,17 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GestãoCarros.Models
 {
     public class Venda
     {
         public Guid VendaId { get; set; }
-
-        public Guid FabricanteId { get; set; }
-
         public Guid VeiculoId { get; set; }
+        public Veiculo? Veiculo { get; set; }
+        public Guid ConcessionariaId { get; set; }
+        public Concessionaria? Concessionaria { get; set; }
 
         [Required(ErrorMessage = "O Veículo é obrigatório.")]
         [Display(Name = "Selecione o Veículo")]
-        public Veiculo? Veiculo { get; set; }
-
         public Guid UsuarioId { get; set; }
 
         [Required(ErrorMessage = "O Usuário é obrigatório.")]

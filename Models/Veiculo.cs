@@ -8,6 +8,8 @@ namespace GestãoCarros.Models
     {
         [Key]
         public Guid VeiculoId { get; set; }
+        public Guid ConcessionariaId { get; set; }
+        public Concessionaria? Concessionaria { get; set; }
 
         [Required(ErrorMessage = "O modelo é obrigatório.")]
         [Display(Name = "Digite o Modelo")]
