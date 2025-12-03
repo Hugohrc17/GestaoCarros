@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace GestãoCarros.Pages
+namespace GestãoCarros.Views
 {
     public class IndexModel : PageModel
     {
