@@ -144,5 +144,10 @@ namespace GestaoCarros.Services.Repo
         {
             await _contexto.SaveChangesAsync();
         }
+
+        public Task<object?> ObterTodosPorIdAsync<T>(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

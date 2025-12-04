@@ -1,3 +1,4 @@
+using AutoMapper;
 using GestãoCarros.Models;
 using GestãoCarros.Models.Dtos;
 using GestãoCarros.Services.Usuarios;
@@ -13,16 +14,18 @@ namespace GestãoCarros.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize(Roles = "Admin,AdminInterno")]
+    [Authorize(Roles = "Admin,AdminInterno")]
     public class UsuarioController : ControllerBase
     {
         private readonly UsuarioService _usuarioService;
         private readonly UserManager<Usuario> _userManager;
+        private readonly IMapper _mapper;
 
-        public UsuarioController(UsuarioService usuarioService,UserManager<Usuario> userManager)
+        public UsuarioController(UsuarioService usuarioService,UserManager<Usuario> userManager, IMapper mapper)
         {
             _usuarioService = usuarioService;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
         [HttpPost("criar-usuario")]
@@ -97,6 +100,52 @@ namespace GestãoCarros.Controllers
                 concessionariaId = usuario.ConcessionariaId,
                 roles = roles
             });
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> ObterTodos()
+        {
+            var usuario = await _usuarioService.ObterTodosAsync();
+            return Ok(usuario);
+        }
+
+        [HttpGet ("{id}")]
+        public async Task<IActionResult> ObterPorId(Guid id)
+        {
+            var usuario = await _usuarioService.ObterPorIdAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(usuario);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Atualizar(Guid id, UsuarioDto usuarioDto)
+        {
+            var usuario = await _usuarioService.ObterPorIdAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            var usuarioAtualizado = _mapper.Map(usuarioDto, usuario);
+            await _usuarioService.AtualizarAsync(id, usuarioAtualizado);
+            return Ok(usuarioAtualizado);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Excluir(Guid id)
+        {
+            var usuario = await _usuarioService.ObterPorIdAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            await _usuarioService.ExcluirAsync(id);
+            return NoContent();
         }
     }
 }

@@ -29,5 +29,6 @@ namespace ImobiFlow.Api.Core.Interfaces
         
         // Operações de Transação
         Task SalvarMudancasAsync();
+        Task<object?> ObterTodosPorIdAsync<T>(Guid id);
     }
 }

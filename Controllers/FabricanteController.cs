@@ -1,3 +1,5 @@
+using AutoMapper;
+using GestãoCarros.Models;
 using GestãoCarros.Models.Dtos;
 using GestãoCarros.Services.Fabricantes;
 using Microsoft.AspNetCore.Authorization;
@@ -12,18 +14,20 @@ namespace GestãoCarros.Controllers
     public class FabricanteController : ControllerBase
     {
         private readonly FabricanteService _fabricanteService;
+        private readonly IMapper _mapper;
 
-        public FabricanteController(FabricanteService fabricanteService)
+        public FabricanteController(FabricanteService fabricanteService, IMapper mapper)
         {
             _fabricanteService = fabricanteService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin,AdminInterno")]
         public async Task<IActionResult> ObterTodos()
         {
-            var fabricantes = await _fabricanteService.ObterTodosAsync();
-            return Ok(fabricantes);
+            var fabricante = await _fabricanteService.ObterTodosAsync();
+            return Ok(fabricante);
         }
 
         [HttpGet("{id}")]
@@ -59,8 +63,10 @@ namespace GestãoCarros.Controllers
                 return NotFound();
             }
 
-            // await _fabricanteService.AtualizarAsync(id);
-            return NoContent();
+            fabricanteDto.FabricanteId = id; 
+            var fabricanteAtualizado = _mapper.Map(fabricanteDto, fabricante);
+            await _fabricanteService.AtualizarAsync(id, fabricanteAtualizado);
+            return Ok(fabricanteAtualizado);
         }
 
         [HttpDelete("{id}")]

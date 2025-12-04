@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using GestãoCarros.Models.Dtos;
 using GestãoCarros.Models;
+using ConcessionariaModel = GestãoCarros.Models.Concessionaria;
+using AutoMapper;
+using ImobiFlow.Api.Core.Interfaces;
 
 namespace GestãoCarros.Services.Usuarios
 {
@@ -8,21 +11,26 @@ namespace GestãoCarros.Services.Usuarios
     {
         private readonly UserManager<Usuario> _userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+        private readonly IMapper _mapper;
+        private readonly IRepositorioGenerico _repositorioGenerico;
 
-        public UsuarioService(UserManager<Usuario> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+        public UsuarioService(UserManager<Usuario> userManager, RoleManager<IdentityRole<Guid>> roleManager, IMapper mapper,
+            IRepositorioGenerico repositorioGenerico)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _mapper = mapper;
+            _repositorioGenerico = repositorioGenerico;
         }
 
-         public async Task<IdentityResult> CriarUsuarioInternoAsync(UsuarioDto usuarioDto, string role = null!)
+        public async Task<IdentityResult> CriarUsuarioInternoAsync(UsuarioDto usuarioDto, string role = null!)
         {
             var usuario = new Usuario
             {
                 UserName = usuarioDto.Email,
                 Email = usuarioDto.Email,
                 Nome = usuarioDto.Nome,
-                
+
                 Ativo = true
             };
 
@@ -33,6 +41,20 @@ namespace GestãoCarros.Services.Usuarios
 
         public async Task<IdentityResult> CriarUsuarioAsync(UsuarioDto usuarioDto, string role = null!)
         {
+            // Validar se a concessionária existe
+            var concessionaria = await _repositorioGenerico.ObterPorIdAsync<ConcessionariaModel>(usuarioDto.ConcessionariaId);
+            if (concessionaria == null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Concessionária não encontrada." });
+            }
+
+            // Verificar se email já existe
+            var usuarioExistente = await _userManager.FindByEmailAsync(usuarioDto.Email!);
+            if (usuarioExistente != null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Este email já está registrado." });
+            }
+
             var usuario = new Usuario
             {
                 UserName = usuarioDto.Email,
@@ -85,6 +107,35 @@ namespace GestãoCarros.Services.Usuarios
             if (usuario != null && await _userManager.CheckPasswordAsync(usuario, senha))
                 return usuario;
             return null;
+        }
+
+        public async Task<Usuario?> ObterPorIdAsync(Guid Usuarioid)
+        {
+            var usuario = await _repositorioGenerico.ObterPorIdAsync<Usuario>(Usuarioid)
+             ?? throw new Exception("Usuário não encontrado, tente novamente");
+            return usuario;
+        }
+
+        public async Task<IEnumerable<UsuarioDto>> ObterTodosAsync()
+        {
+            var todosUsuarios = await _repositorioGenerico.ObterTodosAsync<Usuario>(u => true)
+             ?? throw new Exception("Erro ao obter todos usuários");
+
+            var usuariosDto = _mapper.Map<IEnumerable<UsuarioDto>>(todosUsuarios);
+            return usuariosDto;
+        }
+
+        public async Task AtualizarAsync(Guid id, Usuario usuario)
+        {
+            var Usuario = await _repositorioGenerico.ObterTodosPorIdAsync<Usuario>(id)
+                ?? throw new Exception("Usuario não existe!");
+
+            await _repositorioGenerico.AtualizarAsync(usuario);
+        }
+
+        public async Task ExcluirAsync(Guid usuarioId)
+        {
+            await _repositorioGenerico.ExcluirAsync<Usuario>(usuarioId);
         }
     }
 }

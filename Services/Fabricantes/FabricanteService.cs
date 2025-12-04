@@ -27,7 +27,7 @@ namespace GestãoCarros.Services.Fabricantes
             var Fabricante = await _repositorioGenerico.ObterPorIdAsync<Fabricante>(fabricanteId)
              ?? throw new Exception("Fabricante não encontrado, tente novamente");
 
-            return  Fabricante;
+            return Fabricante;
         }
         public async Task<IEnumerable<FabricanteDto>> ObterTodosAsync()
         {
@@ -62,16 +62,16 @@ namespace GestãoCarros.Services.Fabricantes
 
         public async Task AtualizarAsync(Guid id, Fabricante fabricante)
         {
-            var fabricant =_repositorioGenerico.ObterPorIdAsync<Fabricante>(id)
-                 ?? throw new Exception("Fabricante nao encontrado");
-    
+            var fabricant = await _repositorioGenerico.ObterPorIdAsync<Fabricante>(id)
+                 ?? throw new Exception("Fabricante não encontrado");
+
             await _repositorioGenerico.AtualizarAsync(fabricante);
+            _cache.Remove("Fabricantes");
         }
 
         public async Task ExcluirAsync(Guid fabricanteId)
         {
             await _repositorioGenerico.ExcluirAsync<Fabricante>(fabricanteId);
         }
-
     }
 }
