@@ -10,8 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache();
@@ -63,6 +62,18 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapRazorPages();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Usuario}/{action=LoginToken}/{id?}");
+
+// Redireciona a raiz para a página de login
+app.Use(async (context, next) => {
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/Usuario/LoginToken");
+        return;
+    }
+    await next();
+});
 
 app.Run();

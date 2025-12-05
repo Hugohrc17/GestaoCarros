@@ -1,6 +1,7 @@
 using GestãoCarros.Models;
 using GestãoCarros.Models.Dtos;
 using GestãoCarros.Services.Usuarios;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace GestãoCarros.Controllers
     [ApiController]
     [Route("api/[controller]")]
     // [Authorize(Roles = "Admin,AdminInterno")]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController : Controller
     {
         private readonly UsuarioService _usuarioService;
         private readonly UserManager<Usuario> _userManager;
@@ -97,6 +98,60 @@ namespace GestãoCarros.Controllers
                 concessionariaId = usuario.ConcessionariaId,
                 roles = roles
             });
+        }
+
+        // Login MVC (GET)
+        [HttpGet]
+        [Route("/Usuario/Login")]
+        [AllowAnonymous]
+        public IActionResult LoginView()
+        {
+            return View("~/Views/Usuario/Login.cshtml");
+        }
+
+        // Login MVC (POST)
+        [HttpPost]
+        [Route("/Usuario/Login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LoginView(UsuarioDto usuarioDto)
+        {
+            var usuario = await _usuarioService.AutenticarUsuarioAsync(usuarioDto.Email!, usuarioDto.Senha!);
+            if (usuario == null)
+            {
+                ModelState.AddModelError("", "Usuário ou senha inválidos.");
+                return View("~/Views/Usuario/Login.cshtml", usuarioDto);
+            }
+
+            // Autenticação de sessão/cookie padrão MVC
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.Name, usuario.Email ?? "")
+            };
+            var claimsIdentity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
+            await HttpContext.SignInAsync(
+                IdentityConstants.ApplicationScheme,
+                new ClaimsPrincipal(claimsIdentity)
+            );
+
+            return RedirectToAction("Dashboard", "Home");
+        }
+
+        // Página de login AJAX (GET)
+        [HttpGet]
+        [Route("/Usuario/LoginToken")]
+        [AllowAnonymous]
+        public IActionResult LoginToken()
+        {
+            return View("~/Views/Usuario/LoginToken.cshtml");
+        }
+
+        // Página protegida para teste do token
+        [HttpGet]
+        [Route("/Usuario/TesteToken")]
+        public IActionResult TesteToken()
+        {
+            return Content("Token JWT válido! Usuário autenticado.");
         }
     }
 }
